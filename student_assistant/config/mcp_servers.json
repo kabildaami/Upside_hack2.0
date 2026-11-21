@@ -1,0 +1,10 @@
+{
+  "servers": {
+    "quiz": "servers.quiz_server",
+    "planning": "servers.planning_server",
+    "memory": "servers.memory_server",
+    "curriculum": "servers.curriculum_server",
+    "clock": "servers.clock_server",
+    "analytics": "servers.analytics_server"
+  }
+}

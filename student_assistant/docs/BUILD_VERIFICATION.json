@@ -1,0 +1,26 @@
+{
+  "python_modules_syntax_checked": 31,
+  "pdfs": {
+    "Grade_3_English_The_Island_of_Stories.pdf": {
+      "pages": 27,
+      "sha256": "0aa633a88052cf256d8cf7194e540df9bf0a001371b4459fd5ad3a307eae42f2"
+    },
+    "Grade_3_Maths_The_Island_of_Numbers.pdf": {
+      "pages": 48,
+      "sha256": "b503a5a4c1d2992e1684e1870c01278650d31cc9211aa1338a707e1b1a11c672"
+    },
+    "Grade_3_History_Geography_The_Explorer_Island.pdf": {
+      "pages": 28,
+      "sha256": "ce9c27468d1861bcf62bd9dbc62e23e906848b3759fe747c8c8434c80c34129a"
+    }
+  },
+  "non_destructive_migration": true,
+  "live_db_tested": false,
+  "live_llm_tested": false,
+  "live_mcp_tested": false,
+  "notes": [
+    "Requires local PostgreSQL pgvector extension and credentials",
+    "First FastEmbed run downloads 384d model",
+    "MCP SDK v1 pinned"
+  ]
+}

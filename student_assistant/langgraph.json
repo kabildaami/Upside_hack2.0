@@ -1,0 +1,5 @@
+{
+  "dependencies": ["."],
+  "graphs": {"student_assistant": "./app/graph.py:graph"},
+  "env": ".env"
+}

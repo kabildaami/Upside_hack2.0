@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "upside-student-assistant"
+version = "0.1.0"
+description = "Grade-3 adaptive student learning agent with PostgreSQL, pgvector and MCP"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.setuptools]
+packages = ["app", "services", "mcp_servers", "scripts"]
