@@ -1,0 +1,9 @@
+priority_order:
+  - Wellbeing
+  - Accessibility
+  - Rigor
+card_priorities:
+  low_confidence: Wellbeing
+  adhd: Accessibility
+  dyslexia: Accessibility
+  tough_coursework: Rigor
