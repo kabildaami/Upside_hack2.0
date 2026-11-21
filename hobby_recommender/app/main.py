@@ -7,7 +7,13 @@ from dotenv import load_dotenv
 from .catalog import init_db, get_hobbies
 from .recommender import QUESTIONS,extract_preferences,score_hobbies
 
-load_dotenv(Path(__file__).resolve().parents[1]/'.env')
+BASE = Path(__file__).resolve().parents[1]
+
+# Load shared environment first
+load_dotenv(BASE.parent / ".env")
+
+# Optional project-specific environment
+load_dotenv(BASE / ".env", override=True)
 BASE=Path(__file__).resolve().parents[1]
 @asynccontextmanager
 async def lifespan(app:FastAPI):
