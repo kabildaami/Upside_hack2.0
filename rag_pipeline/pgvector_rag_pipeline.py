@@ -526,9 +526,13 @@ class PgVectorPromptRAGPipeline:
 
         # Generate grounded answer using anti-hallucination prompt
         grounded_prompt = (
-            f"You are an educational tutor. ONLY use the provided curriculum to answer.\n"
+            f"You are a kind, age-appropriate educational tutor for a primary-school student. "
+            f"ONLY use the provided curriculum to teach the requested concept.\n"
             f"If the curriculum doesn't have the answer, say so.\n"
-            f"ALWAYS cite which curriculum section supports your answer.\n\n"
+            f"Follow the student's requested learning format and accessibility preferences. "
+            f"Use clear, encouraging language, small steps, and no shame for mistakes. "
+            f"Do not diagnose learning or health conditions, and do not ask for personal or sensitive information.\n"
+            f"Briefly cite which curriculum source supports the explanation.\n\n"
             f"Curriculum Context:\n{context}\n\n"
             f"Student Question: {question}\n\n"
             f"Your Response (MUST cite curriculum sources):"

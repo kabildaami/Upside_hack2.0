@@ -1,0 +1,18 @@
+.kid-game { display: grid; gap: 18px; }
+.kid-stars { display: flex; gap: 6px; justify-content: center; font-size: 1.4rem; } .kid-stars span { filter: grayscale(1); opacity: .35; } .kid-stars span.on { filter: none; opacity: 1; }
+.mascot-row { display: flex; align-items: center; gap: 12px; }
+.mascot { font-size: 4rem; animation: foxy-bob 2.4s ease-in-out infinite; }
+.mascot-bubble { flex: 1; position: relative; background: #fff7ec; border: 3px solid #ffd2a6; border-radius: 22px; padding: 16px 20px; font-size: 1.35rem; font-weight: 800; line-height: 1.35; }
+.mascot-bubble::before { content: ''; position: absolute; left: -14px; top: 50%; margin-top: -10px; border: 10px solid transparent; border-right-color: #ffd2a6; border-left: 0; }
+.read-btn { width: 56px; height: 56px; border-radius: 50%; border: 3px solid #cfd3f5; background: #fff; font-size: 1.5rem; cursor: pointer; flex: none; }
+.kid-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+.kid-card { position: relative; display: grid; justify-items: center; gap: 8px; padding: 18px 10px; min-height: 140px; border: 4px solid #e3e5f5; border-radius: 26px; background: #fff; font: inherit; cursor: pointer; transition: transform .15s; }
+.kid-card:active { transform: scale(.96); }
+.kid-card.chosen { border-color: #ff9d5c; background: #fff1e6; transform: scale(1.03); }
+.kid-card:focus-visible, .read-btn:focus-visible { outline: 4px solid #5b5bd6; outline-offset: 3px; }
+.kid-icon { font-size: 3.2rem; line-height: 1; } .kid-label { font-size: 1.1rem; font-weight: 800; text-align: center; }
+.kid-tick { position: absolute; top: 8px; right: 12px; background: #36b37e; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; }
+.kid-next { min-height: 60px; font-size: 1.2rem; padding-inline: 32px; } .kid-skip-note { color: #6b6f95; font-weight: 700; }
+@keyframes foxy-bob { 50% { transform: translateY(-8px) rotate(-3deg); } }
+.access-focus .mascot { animation: none; } .access-focus .kid-stars { display: none; }
+@media (max-width: 520px) { .mascot { font-size: 3rem; } .mascot-bubble { font-size: 1.15rem; } }
