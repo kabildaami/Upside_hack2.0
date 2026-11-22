@@ -1,0 +1,114 @@
+/* EduNova workspace v2: purpose-built teacher pages, focused senior study, one-screen junior steps */
+.en-senior-modern{--ink:#15223b;--muted:#62728e;--accent:#4a5fc7;background:linear-gradient(145deg,#f4f7ff,#eaf4f7 65%,#fef5ec);border:1px solid #e0e8f4;border-radius:25px;padding:clamp(16px,2vw,30px);color:var(--ink);}
+.en-senior-top,.en-staff-top{display:flex;justify-content:space-between;gap:24px;align-items:center;margin-bottom:18px}
+.en-senior-top h1,.en-staff-top h1{font-size:clamp(1.4rem,2vw,2rem);letter-spacing:-.035em;margin:6px 0;line-height:1.17}
+.en-senior-top p,.en-staff-top p{margin:0;color:#66758b;font-size:.9rem}
+.en-senior-tag,.en-staff-school{display:flex;align-items:center;gap:9px;border-radius:100px;background:#fff;border:1px solid #dce4f2;padding:10px 16px;font-weight:750;color:#485a87;white-space:nowrap}
+.en-senior-modern .senior-studio-head{display:none}
+.ed-senior-shell{min-width:0}.ed-senior-layout{display:grid;grid-template-columns:215px minmax(0,1fr);align-items:start;gap:16px;min-height:610px}
+.ed-senior-shell .senior-tool-nav{display:flex;flex-direction:column;gap:7px;margin:0;position:sticky;top:94px;padding:10px;border-radius:19px;background:rgba(255,255,255,.83);border:1px solid #e1e6f0;box-shadow:0 12px 36px #2b406b10}
+.ed-senior-shell .senior-tool-nav button{padding:12px 11px;border-color:transparent;background:transparent;box-shadow:none;border-radius:12px;gap:10px;min-height:56px}
+.ed-senior-shell .senior-tool-nav button:hover{transform:none;background:#edf2ff}
+.ed-senior-shell .senior-tool-nav button.chosen{background:#e7ecff;border-color:#bac9f4;box-shadow:inset 3px 0 #536ad0}
+.ed-senior-shell .senior-tool-nav button svg{width:19px;height:19px;flex-shrink:0}
+.ed-senior-shell .senior-tool-nav small{display:none}.ed-senior-shell .senior-tool-nav strong{font-size:.82rem;line-height:1.25}
+.ed-senior-content{min-width:0;min-height:570px;background:#fff!important;border-color:#e2e8f1!important;box-shadow:0 16px 40px #33466b12!important;padding:clamp(16px,2vw,27px)!important}
+.ed-tool-caption{text-transform:uppercase;font-size:.71rem;font-weight:800;letter-spacing:.13em;color:#5a70ae;border-bottom:1px solid #e3e9f4;padding-bottom:12px;margin-bottom:20px}
+.ed-senior-content .senior-two{grid-template-columns:minmax(0,1fr) minmax(195px,248px);gap:18px}
+.ed-senior-content .reason-history-layout{grid-template-columns:200px minmax(0,1fr);min-width:0}
+.ed-senior-content .senior-messages{height:clamp(300px,50vh,540px);max-height:none;min-height:240px;overflow-y:auto;scrollbar-color:#a7b9d7 transparent}
+.ed-senior-content .senior-message-form{margin-top:12px}
+.ed-senior-content .senior-message-form input{min-width:0}
+.ed-senior-content .senior-side{padding:16px}
+.ed-senior-content .senior-side h3{font-size:.94rem}
+.ed-senior-shell button:focus-visible,.en-teacher-modern button:focus-visible{outline:3px solid #86b9f6;outline-offset:2px}
+/* Staff: each action gets its own route-shaped view instead of stacked lengthy forms. */
+.en-teacher-modern{background:linear-gradient(130deg,#f8faff,#f1f8fa);padding:clamp(16px,2vw,26px);border-radius:24px;border:1px solid #e5ebf5}
+.en-teacher-nav{display:flex;align-items:center;gap:6px;border-bottom:1px solid #dbe4f0;margin:0 0 20px;overflow-x:auto;scrollbar-width:thin}
+.en-teacher-nav button{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:0;border-bottom:3px solid transparent;background:transparent;white-space:nowrap;padding:13px 16px;font-weight:800;font-size:.85rem;color:#66748e}
+.en-teacher-nav button.active{color:#3e58af;border-bottom-color:#526dd2;background:#e9eeff;border-radius:11px 11px 0 0}
+.en-teacher-home{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,.9fr);gap:18px}
+.en-teacher-intro,.en-teacher-class-list{background:#fff;border:1px solid #dfe7f2;border-radius:22px;padding:26px;box-shadow:0 9px 32px #273d6210}
+.en-teacher-intro h2,.en-teacher-class-list h2{font-size:1.4rem;margin:10px 0 8px;color:#202e46}
+.en-teacher-intro p{color:#64728a;margin:0 0 22px}
+.en-teacher-quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.en-teacher-quick button{display:flex;flex-direction:column;align-items:flex-start;gap:12px;text-align:left;border:1px solid #d9e2f2;border-radius:17px;padding:22px 17px;background:linear-gradient(155deg,#f2f5ff,#fff);color:#25334e;min-height:230px;transition:transform .18s,box-shadow .18s,border-color .18s}
+.en-teacher-quick button:nth-child(2){background:linear-gradient(155deg,#e8f8f2,#fff)}
+.en-teacher-quick button:nth-child(3){background:linear-gradient(155deg,#fff3e7,#fff)}
+.en-teacher-quick button:hover{transform:translateY(-3px);box-shadow:0 16px 30px #24395119;border-color:#8398d6}
+.en-teacher-quick button strong{font-size:1rem;line-height:1.2}.en-teacher-quick button small{font-size:.78rem;color:#67748d;line-height:1.5}.en-teacher-quick button>svg:last-child{margin-top:auto}
+.en-teacher-class-row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #edf0f5;padding:12px 0;font-size:.85rem}
+.en-teacher-class-row strong,.en-teacher-class-row small{display:block}.en-teacher-class-row small{color:#708099}
+.en-teacher-modern .agent-heading{margin:0 0 12px}.en-teacher-modern .agent-workspace{margin:0}
+.ed-teacher-single{grid-template-columns:minmax(0,1fr)!important;max-width:1100px;margin:0 auto}
+.ed-teacher-single .agent-card{border-radius:22px;padding:clamp(18px,2vw,28px)}
+.ed-teacher-single .agent-teacher-form{max-width:900px}.ed-teacher-single .agent-teacher-form>label{max-width:780px}
+.ed-teacher-single .nova-target-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ed-teacher-single .nova-target-row{margin:13px 0}
+/* Junior: one viewport-sized onboarding step at a time on normal laptops. */
+@media(min-width:1000px) and (min-height:680px){
+ .en-app:has(.en-space.junior){height:100dvh;overflow:hidden;display:flex;flex-direction:column}
+ .en-app:has(.en-space.junior) .en-header{height:66px;min-height:66px;width:100%;flex-shrink:0}
+ .en-app:has(.en-space.junior) .en-layout{flex:1;min-height:0;overflow:hidden;width:100%}
+ .en-app:has(.en-space.junior) .en-footer{display:none}
+ .en-app:has(.en-space.junior) .en-space.junior{height:100%;overflow:hidden;padding:12px 18px}
+ .en-app:has(.en-space.junior) .en-body-grid{height:100%;grid-template-columns:158px minmax(0,1fr)!important;gap:15px!important;align-items:stretch}
+ .en-app:has(.en-space.junior) .en-mascot{position:static;padding:13px 8px;display:flex;flex-direction:column;justify-content:center;gap:8px;border-radius:20px;min-height:0}
+ .en-app:has(.en-space.junior) .en-mascot-bubble{padding:12px 9px;font-size:.79rem;line-height:1.35}
+ .en-app:has(.en-space.junior) .en-mascot-figure img{width:110px;height:110px;object-fit:contain}
+ .en-app:has(.en-space.junior) .en-mascot p{font-size:.76rem;margin:0}
+ .en-app:has(.en-space.junior) .en-sticker{font-size:.68rem;padding:7px}
+ .en-app:has(.en-space.junior) .en-main-column{display:flex;flex-direction:column;min-height:0;gap:7px}
+ .en-app:has(.en-space.junior) .en-main-column .en-stepper{margin:0 0 3px;flex-shrink:0;gap:7px}
+ .en-app:has(.en-space.junior) .en-main-column .en-step{padding:4px 7px}
+ .en-app:has(.en-space.junior) .en-main-column .en-step small{font-size:.68rem}
+ .en-app:has(.en-space.junior) .en-main-column .en-card{padding:12px 16px;margin:0}
+ .en-app:has(.en-space.junior) .en-main-column .en-welcome{padding:0;flex-shrink:0}
+ .en-app:has(.en-space.junior) .en-main-column .en-welcome h1{font-size:1.5rem;margin:0}
+ .en-app:has(.en-space.junior) .en-main-column .en-welcome p{font-size:.8rem;margin:2px 0}
+ .en-app:has(.en-space.junior) .en-avatar-list{gap:6px;flex-wrap:nowrap}
+ .en-app:has(.en-space.junior) .en-avatar{min-width:0;padding:5px}
+ .en-app:has(.en-space.junior) .en-avatar img{width:46px;height:46px}
+ .en-app:has(.en-space.junior) .en-avatar small{font-size:.68rem}
+ .en-app:has(.en-space.junior) .en-subject-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+ .en-app:has(.en-space.junior) .en-subject-tile{padding:10px 5px;min-height:64px;font-size:.78rem}
+ .en-app:has(.en-space.junior) .en-subject-tile span{font-size:1.3rem}
+ .en-app:has(.en-space.junior) .en-main-column .en-actions{margin-top:auto;padding-top:6px;flex-shrink:0}
+ .en-app:has(.en-space.junior) .en-toggle-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ .en-app:has(.en-space.junior) .en-switch-card{padding:9px;min-height:65px}
+ .en-app:has(.en-space.junior) .en-quest-heading{padding:11px;margin:0}
+ .en-app:has(.en-space.junior) .en-quest-heading h2{font-size:1.2rem}
+ .en-app:has(.en-space.junior) .en-quest-avatar img{width:55px;height:55px}
+ .en-app:has(.en-space.junior) .en-prompt-row{margin:0}
+ .en-app:has(.en-space.junior) .agent-workspace{flex:1;min-height:0;overflow:hidden;margin:0;gap:7px}
+ .en-app:has(.en-space.junior) .agent-workspace .agent-columns{min-height:0;overflow:hidden}
+ .en-app:has(.en-space.junior) .agent-workspace .agent-card{min-height:0;overflow-y:auto}
+ .en-app:has(.en-space.junior) .en-quest-footer{flex-shrink:0;padding:4px 0}
+}
+@media(max-width:1220px){.ed-senior-content .senior-two{grid-template-columns:1fr}.ed-senior-content .senior-side{display:block}.en-teacher-quick{grid-template-columns:1fr}.en-teacher-quick button{min-height:100px;display:grid;grid-template-columns:28px 1fr auto;align-items:center}.en-teacher-quick button small{grid-column:2;grid-row:2}.en-teacher-quick button>svg:last-child{grid-column:3;grid-row:1}}
+@media(max-width:900px){.ed-senior-layout{grid-template-columns:1fr}.ed-senior-shell .senior-tool-nav{position:static;display:flex;flex-direction:row;overflow-x:auto;padding:7px}.ed-senior-shell .senior-tool-nav button{white-space:nowrap;flex-shrink:0}.en-teacher-home{grid-template-columns:1fr}}
+@media(max-width:600px){.en-senior-top,.en-staff-top{align-items:start;flex-direction:column}.en-senior-modern,.en-teacher-modern{padding:12px}.ed-senior-content{padding:14px!important}.ed-senior-content .reason-history-layout{grid-template-columns:1fr}.en-teacher-intro,.en-teacher-class-list{padding:17px}.en-teacher-nav button{padding:10px}.ed-teacher-single .nova-target-fields{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.en-teacher-quick button{transition:none}}
+.ed-steps-tip{background:#eff5ff;border:1px solid #dce6fa;border-radius:14px;padding:15px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px;font-size:.8rem;color:#516584}
+.ed-steps-tip strong{color:#293e67;margin-right:4px}
+.ed-steps-tip span{padding:6px 10px;border:1px solid #dce5f3;border-radius:9px;background:#fff}
+.ed-junior-agent-tabs{display:flex;justify-content:center;gap:9px;flex-shrink:0}
+.ed-junior-agent-tabs button{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #d7dff2;background:#fff;color:#596a91;border-radius:13px;padding:10px 15px;font-weight:800;font-size:.85rem;transition:background .2s,border-color .2s}
+.ed-junior-agent-tabs button.active{background:#e9e9ff;color:#523ba7;border-color:#a996e5}
+.ed-junior-agent-single{grid-template-columns:minmax(0,1fr)!important}
+@media(min-width:1000px) and (min-height:680px){
+ .en-app:has(.en-space.junior) .ed-junior-agent-heading{display:none}
+ .en-app:has(.en-space.junior) .agent-top-row{margin:0;gap:8px;flex-shrink:0}
+ .en-app:has(.en-space.junior) .agent-score{padding:7px 11px;border-radius:12px;gap:7px}
+ .en-app:has(.en-space.junior) .agent-score strong{font-size:.9rem}
+ .en-app:has(.en-space.junior) .agent-score span{font-size:.68rem}
+ .en-app:has(.en-space.junior) .agent-card.agent-chat{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;padding:12px}
+ .en-app:has(.en-space.junior) .agent-chat-head{flex-shrink:0}
+ .en-app:has(.en-space.junior) .agent-chat-log{max-height:none;min-height:0;overflow-y:auto;flex:1}
+ .en-app:has(.en-space.junior) .reason-history-layout{flex:1;min-height:0;overflow:hidden;grid-template-columns:160px minmax(0,1fr)}
+ .en-app:has(.en-space.junior) .reason-history-main{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+ .en-app:has(.en-space.junior) .agent-convo-bar,.en-app:has(.en-space.junior) .agent-prompt-row,.en-app:has(.en-space.junior) .agent-chat-form{flex-shrink:0}
+ .en-app:has(.en-space.junior) .nova-tool-dock{display:none}
+ .en-app:has(.en-space.junior) .agent-top-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .en-app:has(.en-space.junior) .agent-quiz{margin-top:7px}
+}

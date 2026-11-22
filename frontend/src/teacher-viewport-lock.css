@@ -1,0 +1,213 @@
+/* EduNova teacher viewport lock v3.
+   Intentionally applies ONLY to the teacher workspace, NEVER to students/parents.
+   Desktop: the outer page is fixed; only long tab bodies scroll internally. */
+@media (min-width: 900px) and (min-height: 540px) {
+  html:has(.en-teacher-modern),
+  body:has(.en-teacher-modern),
+  #root:has(.en-teacher-modern) {
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+  .en-app:has(.en-teacher-modern) {
+    position: relative !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+    display: block !important;
+  }
+  .en-app:has(.en-teacher-modern) > .en-header {
+    position: absolute !important;
+    inset: 0 0 auto 0 !important;
+    z-index: 25 !important;
+    width: 100% !important;
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 clamp(16px,3vw,44px) !important;
+  }
+  .en-app:has(.en-teacher-modern) > .en-footer { display: none !important; }
+  /* Position relative to viewport BELOW global header; no document flow overflow. */
+  .en-app:has(.en-teacher-modern) > .en-layout {
+    position: absolute !important;
+    inset: 64px 0 0 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: calc(100dvh - 64px) !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 8px clamp(12px,2.6vw,38px) 10px !important;
+    overflow: hidden !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-layout > .en-teacher-modern {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 12px clamp(14px,2vw,26px) 14px !important;
+    border-radius: 20px !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-staff-top {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: 0 !important;
+    margin: 0 0 8px !important;
+    gap: 10px !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-staff-top h1 {
+    font-size: clamp(18px,1.7vw,23px) !important;
+    line-height: 1.12 !important;
+    margin: 2px 0 3px !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-staff-top p {
+    margin: 0 !important;
+    font-size: 12px !important;
+    line-height: 1.22 !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-staff-top .en-eyebrow {
+    font-size: 9px !important;
+    line-height: 1.1 !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-staff-school {
+    font-size: 12px !important;
+    padding: 7px 12px !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-nav {
+    flex: 0 0 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    display: flex !important;
+    align-items: stretch !important;
+    margin: 0 0 11px !important;
+    padding: 0 !important;
+    gap: 5px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-nav::-webkit-scrollbar { display: none; }
+  .en-app:has(.en-teacher-modern) .en-teacher-nav > button {
+    flex: 0 0 auto !important;
+    padding: 7px 12px !important;
+    font-size: 12px !important;
+    min-height: 0 !important;
+    line-height: 1.2 !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-home {
+    flex: 1 1 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0,1.7fr) minmax(260px,.93fr) !important;
+    grid-template-rows: minmax(0,1fr) !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-intro,
+  .en-app:has(.en-teacher-modern) .en-teacher-class-list {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: clamp(14px,1.5vw,22px) !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-intro {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-intro h2 {
+    font-size: clamp(17px,1.6vw,22px) !important;
+    line-height: 1.2 !important;
+    margin: 6px 0 !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-intro > p {
+    margin: 0 0 12px !important;
+    font-size: 12px !important;
+    line-height: 1.28 !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-quick {
+    flex: 1 1 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+    grid-template-rows: minmax(0,1fr) !important;
+    min-height: 0 !important;
+    height: auto !important;
+    gap: 10px !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-quick > button {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    box-sizing: border-box !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    padding: clamp(12px,1.25vw,17px) !important;
+    gap: clamp(7px,1.15vh,12px) !important;
+    overflow: hidden !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-quick strong {
+    font-size: clamp(12px,1.12vw,15px) !important;
+    line-height: 1.25 !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-quick small {
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-quick > button > svg:last-child {
+    margin-top: auto !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-class-list h2 {
+    font-size: clamp(17px,1.55vw,21px) !important;
+    margin: 4px 0 10px !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-class-list h3 {
+    font-size: 15px !important;
+    margin: 15px 0 4px !important;
+  }
+  .en-app:has(.en-teacher-modern) .en-teacher-class-row {
+    padding: 8px 0 !important;
+    font-size: 12px !important;
+  }
+  /* Dedicated teacher workspaces: only their own content can scroll. */
+  .en-app:has(.en-teacher-modern) .en-teacher-modern > :not(.en-staff-top):not(.en-teacher-nav):not(.en-teacher-home) {
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    overflow: auto !important;
+    overscroll-behavior: contain;
+  }
+}
+@media (min-width: 900px) and (min-height: 540px) and (max-height: 650px) {
+  .en-app:has(.en-teacher-modern) .en-staff-top p { display:none !important; }
+  .en-app:has(.en-teacher-modern) .en-teacher-modern { padding-block: 8px !important; }
+  .en-app:has(.en-teacher-modern) .en-teacher-nav { margin-bottom: 7px !important; }
+  .en-app:has(.en-teacher-modern) .en-teacher-intro,
+  .en-app:has(.en-teacher-modern) .en-teacher-class-list { padding: 12px !important; }
+}
+/* Small/zoomed/mobile layouts keep accessible document scrolling. */

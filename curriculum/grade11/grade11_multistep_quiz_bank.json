@@ -1,0 +1,418 @@
+{
+  "version": "1.0",
+  "grade": 11,
+  "subject": "Mathematics",
+  "note": "Teacher-reviewed import: answers and hints are never sent in question listings. Source match required.",
+  "questions": [
+    {
+      "lesson_key": "G11-M01",
+      "title": "Function variation",
+      "statement": "For f(x)=x^2-4x+3, determine the interval where f is increasing.",
+      "steps": [
+        {
+          "index": 1,
+          "prompt": "Differentiate f(x).",
+          "expected_answer": "2x-4",
+          "hint": "Identify the derivative of x^2 and of -4x.",
+          "xp": 8,
+          "check_type": "exact"
+        },
+        {
+          "index": 2,
+          "prompt": "At what x does the derivative equal zero?",
+          "expected_answer": "2",
+          "hint": "Solve 2x-4=0.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 3,
+          "prompt": "Give the lower endpoint of the interval of increase.",
+          "expected_answer": "2",
+          "hint": "The derivative becomes non-negative after the critical point.",
+          "xp": 8,
+          "check_type": "numeric"
+        }
+      ],
+      "difficulty": "advanced",
+      "grade": 11,
+      "subject": "Mathematics",
+      "max_xp": 24,
+      "source_terms": [
+        "functions,",
+        "domains",
+        "and"
+      ],
+      "teacher_explanation": "The derivative is non-negative for x>=2, so f is increasing on [2,+infinity)."
+    },
+    {
+      "lesson_key": "G11-M01",
+      "title": "Critical point",
+      "statement": "For g(x)=3x^2-12x+1, justify the location of its minimum.",
+      "steps": [
+        {
+          "index": 1,
+          "prompt": "Differentiate g(x).",
+          "expected_answer": "6x-12",
+          "hint": "Use the power rule.",
+          "xp": 8,
+          "check_type": "exact"
+        },
+        {
+          "index": 2,
+          "prompt": "Solve g'(x)=0.",
+          "expected_answer": "2",
+          "hint": "Isolate x in 6x-12=0.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 3,
+          "prompt": "Compute g(2).",
+          "expected_answer": "-11",
+          "hint": "Substitute x=2 and calculate.",
+          "xp": 8,
+          "check_type": "numeric"
+        }
+      ],
+      "difficulty": "advanced",
+      "grade": 11,
+      "subject": "Mathematics",
+      "max_xp": 24,
+      "source_terms": [
+        "functions,",
+        "domains",
+        "and"
+      ],
+      "teacher_explanation": "g' changes from negative to positive at x=2; the minimum is -11."
+    },
+    {
+      "lesson_key": "G11-M02",
+      "title": "Quadratic discriminant",
+      "statement": "Solve x^2-5x+6=0 with the discriminant method.",
+      "steps": [
+        {
+          "index": 1,
+          "prompt": "Give the coefficient b.",
+          "expected_answer": "-5",
+          "hint": "Compare ax^2+bx+c with the equation.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 2,
+          "prompt": "Calculate Delta.",
+          "expected_answer": "1",
+          "hint": "Use b squared minus 4ac.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 3,
+          "prompt": "Give the smallest real root.",
+          "expected_answer": "2",
+          "hint": "Substitute in (-b-sqrt(Delta))/(2a).",
+          "xp": 8,
+          "check_type": "numeric"
+        }
+      ],
+      "difficulty": "advanced",
+      "grade": 11,
+      "subject": "Mathematics",
+      "max_xp": 24,
+      "source_terms": [
+        "quadratic",
+        "equations",
+        "and"
+      ],
+      "teacher_explanation": "The roots are 2 and 3."
+    },
+    {
+      "lesson_key": "G11-M02",
+      "title": "Trinomial inequality",
+      "statement": "Solve x^2-5x+6 <= 0 using its roots and the sign chart.",
+      "steps": [
+        {
+          "index": 1,
+          "prompt": "Find the smaller root.",
+          "expected_answer": "2",
+          "hint": "Factor or apply the discriminant.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 2,
+          "prompt": "Find the greater root.",
+          "expected_answer": "3",
+          "hint": "Use the other root.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 3,
+          "prompt": "For x=2.5, compute the expression.",
+          "expected_answer": "-0.25",
+          "hint": "Substitute the number to check the sign between roots.",
+          "xp": 8,
+          "check_type": "numeric"
+        }
+      ],
+      "difficulty": "advanced",
+      "grade": 11,
+      "subject": "Mathematics",
+      "max_xp": 24,
+      "source_terms": [
+        "quadratic",
+        "equations",
+        "and"
+      ],
+      "teacher_explanation": "The solution set is [2,3] because the parabola opens upward."
+    },
+    {
+      "lesson_key": "G11-M03",
+      "title": "Arithmetic sequence induction",
+      "statement": "u0=3 and u(n+1)=u(n)+4. Justify the formula u(n)=3+4n.",
+      "steps": [
+        {
+          "index": 1,
+          "prompt": "Compute u1.",
+          "expected_answer": "7",
+          "hint": "Add the common difference to u0.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 2,
+          "prompt": "Evaluate 3+4(0) for the base case.",
+          "expected_answer": "3",
+          "hint": "Use n=0.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 3,
+          "prompt": "Simplify (3+4n)+4 into a compact expression.",
+          "expected_answer": "7+4n",
+          "hint": "Write it as a formula for n+1.",
+          "xp": 8,
+          "check_type": "exact"
+        }
+      ],
+      "difficulty": "advanced",
+      "grade": 11,
+      "subject": "Mathematics",
+      "max_xp": 24,
+      "source_terms": [
+        "sequences",
+        "and",
+        "mathematical"
+      ],
+      "teacher_explanation": "The base case holds, and the recurrence preserves the formula. Therefore the formula holds for all n>=0."
+    },
+    {
+      "lesson_key": "G11-M04",
+      "title": "Intermediate value theorem",
+      "statement": "Show that x^2-2=0 has a root between 1 and 2.",
+      "steps": [
+        {
+          "index": 1,
+          "prompt": "Compute f(1).",
+          "expected_answer": "-1",
+          "hint": "Substitute 1 into x^2-2.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 2,
+          "prompt": "Compute f(2).",
+          "expected_answer": "2",
+          "hint": "Substitute 2 into x^2-2.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 3,
+          "prompt": "How many sign changes appear between these endpoint values?",
+          "expected_answer": "1",
+          "hint": "The endpoints have opposite signs.",
+          "xp": 8,
+          "check_type": "numeric"
+        }
+      ],
+      "difficulty": "advanced",
+      "grade": 11,
+      "subject": "Mathematics",
+      "max_xp": 24,
+      "source_terms": [
+        "limits",
+        "and",
+        "continuity"
+      ],
+      "teacher_explanation": "By continuity and the intermediate value theorem there is at least one c in (1,2) with f(c)=0."
+    },
+    {
+      "lesson_key": "G11-M05",
+      "title": "Tangent equation",
+      "statement": "For f(x)=x^2-6x+8, calculate the tangent properties at x=2.",
+      "steps": [
+        {
+          "index": 1,
+          "prompt": "Compute f'(x).",
+          "expected_answer": "2x-6",
+          "hint": "Differentiate each term.",
+          "xp": 8,
+          "check_type": "exact"
+        },
+        {
+          "index": 2,
+          "prompt": "Evaluate f'(2).",
+          "expected_answer": "-2",
+          "hint": "Substitute x=2.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 3,
+          "prompt": "Evaluate f(2).",
+          "expected_answer": "0",
+          "hint": "Substitute x=2 into the original f.",
+          "xp": 8,
+          "check_type": "numeric"
+        }
+      ],
+      "difficulty": "advanced",
+      "grade": 11,
+      "subject": "Mathematics",
+      "max_xp": 24,
+      "source_terms": [
+        "derivatives,",
+        "tangents",
+        "and"
+      ],
+      "teacher_explanation": "The tangent line is y=-2(x-2)."
+    },
+    {
+      "lesson_key": "G11-M06",
+      "title": "Unit-circle identity",
+      "statement": "In quadrant I, sin(t)=3/5. Determine cos(t).",
+      "steps": [
+        {
+          "index": 1,
+          "prompt": "Calculate sin^2(t).",
+          "expected_answer": "0.36",
+          "hint": "Square 3/5.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 2,
+          "prompt": "Calculate cos^2(t).",
+          "expected_answer": "0.64",
+          "hint": "Subtract from one.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 3,
+          "prompt": "Determine positive cos(t).",
+          "expected_answer": "0.8",
+          "hint": "Take the positive square root in quadrant I.",
+          "xp": 8,
+          "check_type": "numeric"
+        }
+      ],
+      "difficulty": "advanced",
+      "grade": 11,
+      "subject": "Mathematics",
+      "max_xp": 24,
+      "source_terms": [
+        "trigonometry",
+        "on",
+        "the"
+      ],
+      "teacher_explanation": "cos(t)=4/5."
+    },
+    {
+      "lesson_key": "G11-M07",
+      "title": "Vector dot product",
+      "statement": "Given A(1,2), B(4,6), C(5,1), decide if AB and AC are perpendicular.",
+      "steps": [
+        {
+          "index": 1,
+          "prompt": "Give the x-coordinate of AB.",
+          "expected_answer": "3",
+          "hint": "Subtract xB-xA.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 2,
+          "prompt": "Give the y-coordinate of AC.",
+          "expected_answer": "-1",
+          "hint": "Subtract yC-yA.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 3,
+          "prompt": "Compute AB dot AC.",
+          "expected_answer": "8",
+          "hint": "AB=(3,4), AC=(4,-1): multiply and add.",
+          "xp": 8,
+          "check_type": "numeric"
+        }
+      ],
+      "difficulty": "advanced",
+      "grade": 11,
+      "subject": "Mathematics",
+      "max_xp": 24,
+      "source_terms": [
+        "vectors",
+        "and",
+        "analytic"
+      ],
+      "teacher_explanation": "The scalar product is 8, not zero; the vectors are not perpendicular."
+    },
+    {
+      "lesson_key": "G11-M08",
+      "title": "Conditional probability",
+      "statement": "Three blue and two red tokens. Without replacement, find probability of two blue draws.",
+      "steps": [
+        {
+          "index": 1,
+          "prompt": "Probability of blue on first draw.",
+          "expected_answer": "0.6",
+          "hint": "There are three blue out of five.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 2,
+          "prompt": "Conditional probability blue on second after blue first.",
+          "expected_answer": "0.5",
+          "hint": "There are two blue among four remaining.",
+          "xp": 8,
+          "check_type": "numeric"
+        },
+        {
+          "index": 3,
+          "prompt": "Multiply both probabilities.",
+          "expected_answer": "0.3",
+          "hint": "Use the multiplication rule.",
+          "xp": 8,
+          "check_type": "numeric"
+        }
+      ],
+      "difficulty": "advanced",
+      "grade": 11,
+      "subject": "Mathematics",
+      "max_xp": 24,
+      "source_terms": [
+        "probability",
+        "and",
+        "conditional"
+      ],
+      "teacher_explanation": "P(two blue)=3/5 * 2/4 = 3/10."
+    }
+  ]
+}

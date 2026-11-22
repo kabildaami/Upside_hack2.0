@@ -1,0 +1,90 @@
+# HobbyQuest integration: authenticated, free-text, student-owned tool sessions.
+from backend.app.agent.hobbyquest.edunova_adapter import (
+    QUESTIONS as HOBBY_QUESTIONS, question_for as hobby_question,
+    validate_free_text, recommend_for_edunova,
+)
+
+@router.post('/hobbies/sessions',status_code=201)
+def create_hobby_session(sid:int=Depends(student_dep),db:Session=Depends(get_db)):
+    session_id=db.execute(text("INSERT INTO public.senior_hobby_sessions(student_id,engine_version) VALUES (:sid,'hobbyquest_v2') RETURNING id"),{'sid':sid}).scalar_one()
+    db.commit()
+    return {'session_id':str(session_id),'status':'active','total_questions':6,'question':hobby_question(0)}
+
+@router.get('/hobbies/sessions')
+def list_hobby_sessions(sid:int=Depends(student_dep),db:Session=Depends(get_db)):
+    return [dict(r) for r in db.execute(text('''SELECT id,status,summary,engine_version,created_at,completed_at FROM public.senior_hobby_sessions
+      WHERE student_id=:sid ORDER BY created_at DESC LIMIT 30'''),{'sid':sid}).mappings()]
+
+@router.get('/hobbies/sessions/{session_id}')
+def get_hobby_session(session_id:UUID,sid:int=Depends(student_dep),db:Session=Depends(get_db)):
+    r=db.execute(text('''SELECT id,status,summary,engine_version,created_at FROM public.senior_hobby_sessions
+      WHERE id=:id AND student_id=:sid'''),{'id':session_id,'sid':sid}).mappings().first()
+    if not r:raise HTTPException(404,'Session not found')
+    answers=[dict(a) for a in db.execute(text('''SELECT question_index,question_id,option_id,option_label FROM public.senior_hobby_answers
+      WHERE session_id=:id ORDER BY question_index'''),{'id':session_id}).mappings()]
+    results=[dict(x) for x in db.execute(text('''SELECT rank,hobby_name,score,description,reason,evidence FROM public.senior_hobby_recommendations
+      WHERE session_id=:id ORDER BY rank'''),{'id':session_id}).mappings()]
+    legacy=r['engine_version']!='hobbyquest_v2'
+    return {'session_id':str(r['id']),'status':r['status'] if not legacy or r['status']=='completed' else 'legacy', 'summary':r['summary'],
+      'engine_version':r['engine_version'], 'answers':answers, 'results':results,
+      'question':hobby_question(len(answers)) if not legacy and r['status']=='active' and len(answers)<6 else None,
+      'completed_questions':len(answers),'total_questions':6}
+
+class HobbyAnswer(BaseModel):
+    question_index:int=Field(ge=0,le=5)
+    answer:str=Field(min_length=2,max_length=1200)
+
+@router.post('/hobbies/sessions/{session_id}/answer')
+async def answer_hobby(session_id:UUID,payload:HobbyAnswer,sid:int=Depends(student_dep),db:Session=Depends(get_db)):
+    # A row lock enforces one response per question and prevents concurrent step skips.
+    row=db.execute(text('''SELECT id,status,engine_version FROM public.senior_hobby_sessions
+       WHERE id=:id AND student_id=:sid FOR UPDATE'''),{'id':session_id,'sid':sid}).mappings().first()
+    if not row:raise HTTPException(404,'Session not found')
+    if row['engine_version']!='hobbyquest_v2':raise HTTPException(409,'Older multiple-choice sessions cannot be resumed in the new free-text tool. Start a new discovery.')
+    if row['status']!='active':raise HTTPException(409,'Session is already completed')
+    count=db.execute(text('SELECT count(*) FROM public.senior_hobby_answers WHERE session_id=:id'),{'id':session_id}).scalar_one()
+    if payload.question_index!=count:raise HTTPException(409,'Submit the next question in order')
+    try:answer=validate_free_text(payload.answer)
+    except ValueError as exc:raise HTTPException(422,str(exc)) from exc
+    q=hobby_question(count)
+    db.execute(text('''INSERT INTO public.senior_hobby_answers(session_id,question_index,question_id,option_id,option_label)
+      VALUES (:id,:i,:qid,'free_text',:answer)'''),{'id':session_id,'i':count,'qid':q['id'],'answer':answer})
+    db.execute(text('UPDATE public.senior_hobby_sessions SET updated_at=now() WHERE id=:id'),{'id':session_id})
+    if count<5:
+        db.commit()
+        return {'session_id':str(session_id),'status':'active','completed_questions':count+1,'total_questions':6,
+          'question':hobby_question(count+1)}
+    answers=[r[0] for r in db.execute(text('''SELECT option_label FROM public.senior_hobby_answers
+       WHERE session_id=:id ORDER BY question_index'''),{'id':session_id}).all()]
+    # Network call releases the row lock without publishing an incomplete result; the
+    # primary key still blocks a repeated sixth answer. Rollback on failure.
+    try:result=await recommend_for_edunova(answers)
+    except Exception:
+        db.rollback()
+        raise HTTPException(503,'Hobby discovery is temporarily unavailable. Please retry.')
+    import json
+    db.execute(text('''UPDATE public.senior_hobby_sessions SET status='completed', summary=:summary,
+         updated_at=now(),completed_at=now() WHERE id=:id'''),{'id':session_id,'summary':result['summary']})
+    for r in result['results']:
+        db.execute(text('''INSERT INTO public.senior_hobby_recommendations(session_id,rank,hobby_name,score,description,reason,evidence)
+          VALUES (:id,:rank,:name,:score,:description,:reason,CAST(:evidence AS jsonb))'''),
+          {'id':session_id,'rank':r['rank'],'name':r['hobby_name'],'score':r['score'],
+           'description':r['description'],'reason':r['reason'],'evidence':json.dumps(r['evidence'])})
+    db.commit()
+    return {'session_id':str(session_id),'status':'completed','completed_questions':6,'total_questions':6,
+      'summary':result['summary'],'extraction_method':result['extraction_method'],
+      'results':result['results'],'catalog_size':result['catalog_size'],
+      'note':'Scores are heuristic matches, not probabilities or ability assessments.'}
+
+@router.get('/hobbies/tool-context')
+def hobby_tool_context(sid:int=Depends(student_dep),db:Session=Depends(get_db)):
+    # Read-only senior-agent tool: latest completed discovery.
+    row=db.execute(text('''SELECT id,summary FROM public.senior_hobby_sessions
+       WHERE student_id=:sid AND status='completed' AND engine_version='hobbyquest_v2'
+       ORDER BY completed_at DESC LIMIT 1'''),{'sid':sid}).mappings().first()
+    if not row:return {'available':False,'suggestion':'Open Hobby discovery to answer six free-text questions.'}
+    results=[dict(r) for r in db.execute(text('''SELECT rank,hobby_name,score,reason FROM public.senior_hobby_recommendations
+      WHERE session_id=:id ORDER BY rank'''),{'id':row['id']}).mappings()]
+    return {'available':True,'summary':row['summary'],'recommendations':results,
+      'note':'Scores are heuristic and exploratory; they are not probabilities or talent predictions.'}
+

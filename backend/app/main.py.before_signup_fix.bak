@@ -1,0 +1,29 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from backend.app.api.routes import router
+from backend.app.api.auth import router as auth_router
+from backend.app.api.login_spaces import router as spaces_router
+from backend.app.api.curriculum import router as curriculum_router
+from backend.app.api.student_rag import router as student_rag_router
+from backend.app.api.student_experience import router as experience_router
+from backend.app.core.config import get_settings
+from backend.app.api.agent_routes import router as agent_router
+from backend.app.api.senior_agent import router as senior_router
+from backend.app.api.senior_reasoning import router as reasoning_router
+
+settings = get_settings()
+app = FastAPI(title='EduNova API', version='0.5.0')
+app.add_middleware(CORSMiddleware, allow_origins=[settings.frontend_origin], allow_credentials=False, allow_methods=['GET','POST'], allow_headers=['Authorization','Content-Type'])
+app.include_router(auth_router, prefix='/api')
+app.include_router(spaces_router, prefix='/api')
+app.include_router(curriculum_router, prefix='/api')
+app.include_router(student_rag_router, prefix='/api')
+app.include_router(experience_router, prefix='/api')
+app.include_router(agent_router, prefix='/api')
+app.include_router(senior_router, prefix='/api')
+app.include_router(reasoning_router, prefix='/api')
+app.include_router(router, prefix='/api')
+
+@app.get('/')
+def home():
+    return {'message':'EduNova API', 'docs':'/docs'}

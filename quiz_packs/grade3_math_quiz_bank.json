@@ -1,0 +1,134 @@
+{
+  "source_document": "Grade_3_Learning_Adventure_English.pdf — Mathematics lessons 01 and 02",
+  "source_scope": "Question pack adapted to specific curriculum concepts; not a copy of original exercises",
+  "questions": [
+    {
+      "lesson_key": "MAT-01",
+      "source_keyword": "thousands",
+      "template": "multiple_choice",
+      "prompt": "In 6,284, what is the value of the digit 6?",
+      "options": [
+        "6",
+        "60",
+        "600",
+        "6,000"
+      ],
+      "answer_text": "6,000",
+      "hint": "Look at the leftmost place: thousands, hundreds, tens, ones.",
+      "explanation": "The digit 6 is in the thousands place, so it represents 6,000."
+    },
+    {
+      "lesson_key": "MAT-01",
+      "source_keyword": "hundreds",
+      "template": "number_input",
+      "prompt": "In 9,307, what is the value of the digit 3?",
+      "options": [],
+      "answer_text": "300",
+      "hint": "The 3 is in the hundreds place. How much are three hundreds?",
+      "explanation": "3 hundreds means 300."
+    },
+    {
+      "lesson_key": "MAT-01",
+      "source_keyword": "place value",
+      "template": "multiple_choice",
+      "prompt": "Which expanded form represents 4,528?",
+      "options": [
+        "4,000 + 500 + 20 + 8",
+        "4,000 + 50 + 200 + 8",
+        "400 + 500 + 20 + 8",
+        "4,000 + 500 + 2 + 8"
+      ],
+      "answer_text": "4,000 + 500 + 20 + 8",
+      "hint": "Name each digit’s place from left to right.",
+      "explanation": "4 thousands, 5 hundreds, 2 tens, and 8 ones give 4,528."
+    },
+    {
+      "lesson_key": "MAT-01",
+      "source_keyword": "tens",
+      "template": "true_false",
+      "prompt": "In 5,060, the digit 6 means 6 tens.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer_text": "True",
+      "hint": "Check the column immediately to the left of ones.",
+      "explanation": "6 is in the tens place, so it means 60."
+    },
+    {
+      "lesson_key": "MAT-01",
+      "source_keyword": "digit",
+      "template": "number_input",
+      "prompt": "What digit is in the tens place of 7,284?",
+      "options": [],
+      "answer_text": "8",
+      "hint": "Read from right: ones, then tens.",
+      "explanation": "7,284 has 4 ones and 8 tens, so the tens digit is 8."
+    },
+    {
+      "lesson_key": "MAT-02",
+      "source_keyword": "compare",
+      "template": "multiple_choice",
+      "prompt": "Choose the true comparison.",
+      "options": [
+        "4,509 > 4,590",
+        "4,509 < 4,590",
+        "4,509 = 4,590"
+      ],
+      "answer_text": "4,509 < 4,590",
+      "hint": "Compare the hundreds first. If equal, compare the tens.",
+      "explanation": "Both have 4 thousands and 5 hundreds. The tens are 0 and 9, so 4,509 is smaller."
+    },
+    {
+      "lesson_key": "MAT-02",
+      "source_keyword": "ascending",
+      "template": "multiple_choice",
+      "prompt": "Which list is in ascending order?",
+      "options": [
+        "2,411; 2,140; 2,104",
+        "2,104; 2,140; 2,411",
+        "2,140; 2,104; 2,411"
+      ],
+      "answer_text": "2,104; 2,140; 2,411",
+      "hint": "Ascending means smallest to largest.",
+      "explanation": "2,104 is smaller than 2,140, which is smaller than 2,411."
+    },
+    {
+      "lesson_key": "MAT-02",
+      "source_keyword": "greater than",
+      "template": "true_false",
+      "prompt": "5,207 is greater than 5,172.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer_text": "True",
+      "hint": "Start at the thousands column, then look at the hundreds.",
+      "explanation": "The thousands match, but 2 hundreds is more than 1 hundred."
+    },
+    {
+      "lesson_key": "MAT-02",
+      "source_keyword": "hundreds",
+      "template": "multiple_choice",
+      "prompt": "Between which two hundreds does 3,678 lie?",
+      "options": [
+        "3,500 and 3,600",
+        "3,600 and 3,700",
+        "3,700 and 3,800"
+      ],
+      "answer_text": "3,600 and 3,700",
+      "hint": "Which hundred is just below 3,678?",
+      "explanation": "3,678 is bigger than 3,600 and smaller than 3,700."
+    },
+    {
+      "lesson_key": "MAT-02",
+      "source_keyword": "ascending",
+      "template": "number_input",
+      "prompt": "What is the smallest number among 2,411; 2,104; 2,140?",
+      "options": [],
+      "answer_text": "2104",
+      "hint": "Thousands match. Compare the hundreds and then tens.",
+      "explanation": "2,104 is the smallest of the three numbers."
+    }
+  ]
+}

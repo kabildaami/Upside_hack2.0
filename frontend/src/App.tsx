@@ -1,0 +1,245 @@
+import { StudentAdmission, DirectorAdmissions } from './components/StudentAdmission';
+import {SeniorMathTeacherStudio} from './components/SeniorMathTeacherStudio';
+import SeniorAgentStudio from './components/SeniorAgentStudio';
+import {StudentAgent,TeacherAgentPlanning,ClockDisplay} from './components/AgentWorkspace';
+import './components/agent.css';
+import {useEffect, useState, type FormEvent, type ReactNode} from 'react';
+import {BookOpen, Gamepad2, GraduationCap, Users, School, ShieldCheck, LogOut, ArrowRight, LockKeyhole, Eye, EyeOff, CheckCircle2, Baby, Presentation, HeartHandshake, Sparkles, KeyRound, ChevronRight, UploadCloud, FileText, Search, RefreshCw, Send, MessageCircle, LoaderCircle, CalendarDays, Timer, Target, Trophy, Palette, Moon, Volume2, VolumeX, Settings2, ArrowLeft, Check, Play, Compass, NotebookPen, Layers, Lightbulb, Clock, Star, Leaf, RotateCcw, Calculator, BookOpenText, FlaskConical, Globe2, Languages, Shapes, PanelRightOpen, PanelRightClose, PanelLeftOpen, PanelLeftClose, History, Plus, MessageSquareText} from 'lucide-react';
+
+type Role = 'student'|'parent'|'teacher'|'director'|'admin';
+type User = {user_id:number;first_name:string;last_name:string;email:string;role:Role};
+type LoginResult = {access_token:string; user:User};
+type StudentRecord = {student_id:number;school_name:string;class_name:string|null;grade_level:string|null;school_level:string|null;open_goals:number;tracked_concepts:number};
+type ChildRecord = {student_id:number;first_name:string;last_name:string;school_name:string;class_name:string|null;grade_level:string|null};
+type ClassRecord = {class_id:number;class_name:string;grade_level:string|null;school_name:string;student_count:number};
+type StudentSpace={space:'student';account:string;student:StudentRecord|null};
+type ParentSpace={space:'parent';account:string;children:ChildRecord[]};
+type TeacherSpace={space:'teacher';account:string;classes:ClassRecord[];students:{student_id:number;first_name:string;last_name:string;class_id:number;class_name:string;grade_level:string}[]};
+type DirectorSpace={space:'director';account:string;school:{school_id:number;school_name:string;city:string;teacher_count:number;student_count:number;class_count:number}|null};
+type CurriculumAssignment={teacher_id:number;school_id:number;class_id:number;subject_id:number;class_name:string;grade_level:string|null;academic_year:string|null;subject_name:string};
+type CurriculumDocument={id:number;title:string;original_filename:string;file_size:number;created_at:string;status:string;chunk_count:number;extracted_chars:number;class_id:number;subject_id:number;class_name:string;grade_level:string|null;subject_name:string};
+type CurriculumChunk={id:number;chunk_index:number;page_number:number|null;heading:string|null;content:string};
+type Space = StudentSpace|ParentSpace|TeacherSpace|DirectorSpace;
+
+async function request<T>(path:string,token?:string,init:RequestInit={}):Promise<T>{
+  const response=await fetch(`/api${path}`,{...init,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{}) ,...init.headers}});
+  if(!response.ok){let detail=`HTTP ${response.status}`;try{const body=await response.json();detail=typeof body.detail==='string'?body.detail:detail;}catch{}throw new Error(detail);}
+  return response.status===204?undefined as T:response.json();
+}
+const demos = [
+  {role:'Parent',email:'amira@exellence.com'},
+  {role:'Teacher · Grade 3',email:'samy@exellence.com'},
+  {role:'Teacher · Grade 3 literacy',email:'ines@exellence.com'},
+  {role:'Student · Grade 3',email:'adam@exellence.com'},
+  {role:'Student · Grade 11',email:'mehdi@exellence.com'},
+  {role:'Director',email:'nadia@exellence.com'},
+];
+function Card({icon,title,children}:{icon:ReactNode;title:string;children:ReactNode}){
+ return <article className="info-card"><div className="card-icon">{icon}</div><h3>{title}</h3>{children}</article>;
+}
+type RagDocument={id:number;title:string;chunk_count:number;class_name:string;subject_name:string;teacher_first_name:string;teacher_last_name:string};
+type RagSource={chunk_id:number;document_id:number;title:string;chunk_index:number;page_number:number|null;heading:string|null;subject_name:string;class_name:string;score:number;excerpt:string};
+type RagReply={answer:string;question:string;mode:string;sources:RagSource[]};
+type ConversationMessage={kind:'student'|'assistant';text:string;mode?:string;sources?:RagSource[]};
+function StudentAssistant({token,starterPrompt='',readAloud=false}:{token:string;starterPrompt?:string;readAloud?:boolean}){
+ const [documents,setDocuments]=useState<RagDocument[]>([]);
+ const [selectedDoc,setSelectedDoc]=useState('all');
+ const [messages,setMessages]=useState<ConversationMessage[]>([]);
+ const [question,setQuestion]=useState('');
+ const [loading,setLoading]=useState(false);
+ const [error,setError]=useState('');
+ const [loaded,setLoaded]=useState(false);
+ useEffect(()=>{if(!readAloud || !messages.length)return;const last=messages[messages.length-1];if(last.kind==='assistant' && 'speechSynthesis' in window){window.speechSynthesis.cancel();window.speechSynthesis.speak(new SpeechSynthesisUtterance(last.text));}},[messages,readAloud]);
+ useEffect(()=>{if(starterPrompt)setQuestion(starterPrompt);},[starterPrompt]);
+ useEffect(()=>{let active=true;request<RagDocument[]>('/student/rag/documents',token).then(items=>{if(active){setDocuments(items);setLoaded(true);}}).catch(e=>{if(active){setError(String(e));setLoaded(true);}});return()=>{active=false;};},[token]);
+ async function ask(e:FormEvent){e.preventDefault();const q=question.trim();if(q.length<3||loading)return;
+   setQuestion('');setError('');setLoading(true);setMessages(old=>[...old,{kind:'student',text:q}]);
+   try{const payload={question:q,...(selectedDoc==='all'?{}:{document_id:Number(selectedDoc)})};
+     const answer=await request<RagReply>('/student/rag/ask',token,{method:'POST',body:JSON.stringify(payload)});
+     setMessages(old=>[...old,{kind:'assistant',text:answer.answer,mode:answer.mode,sources:answer.sources}]);
+   }catch(err){setError(err instanceof Error?err.message:'Could not ask the assistant');setQuestion(q);}finally{setLoading(false);}}
+ return <section className="assistant-panel"><div className="assistant-header"><div><span className="small-pill">MY CURRICULUM TUTOR</span><h2>Ask a question about your lesson</h2><p>Answers are based on your class's teacher-uploaded documents. You can inspect the exact passages used.</p></div><MessageCircle size={31}/></div>
+ <label className="assistant-label" htmlFor="rag-document">Choose a curriculum document</label>
+ <select id="rag-document" value={selectedDoc} onChange={e=>{setSelectedDoc(e.target.value);setMessages([]);}} disabled={!documents.length}>
+ <option value="all">All documents assigned to my class</option>{documents.map(d=><option value={d.id} key={d.id}>{d.title} · {d.subject_name} · {d.teacher_first_name}</option>)}
+ </select>
+ {!loaded?<div className="assistant-note">Loading your class documents…</div>:documents.length===0?<div className="assistant-note">No processed documents are available to your class yet. Ask your teacher to upload one for your assigned class and subject.</div>:<div className="assistant-note">{documents.length} curriculum document(s) available. Try: “What are hundreds, tens and ones?” or ask about the exact topic in the PDF.</div>}
+ <div className="assistant-messages" aria-live="polite">{messages.length===0?<div className="assistant-welcome"><BookOpen size={27}/><strong>Ready to learn?</strong><p>Ask something from your lesson. I will show which document passages support my response.</p></div>:messages.map((m,i)=><article key={i} className={`assistant-message ${m.kind}`}><div className="assistant-message-caption">{m.kind==='student'?'You':'Learning assistant'}</div><p>{m.text}</p>{m.kind==='assistant'&&<><small>Answer mode: {m.mode}</small>{Boolean(m.sources?.length)&&<details><summary>See lesson sources ({m.sources?.length})</summary>{m.sources?.map(s=><div className="assistant-source" key={s.chunk_id}><strong>{s.title} · {s.subject_name} · {s.page_number?`Page ${s.page_number}`:`Chunk ${s.chunk_index+1}`}</strong><p>{s.excerpt}</p></div>)}</details>}</>}</article>)}{loading&&<div className="assistant-note"><LoaderCircle size={17}/> Searching your curriculum…</div>}</div>
+ {error&&<div role="alert" className="error">{error}</div>}
+ <form className="assistant-form" onSubmit={ask}><label htmlFor="rag-question">Your question</label><div className="assistant-input-line"><input id="rag-question" value={question} onChange={e=>setQuestion(e.target.value)} maxLength={800} minLength={3} placeholder="Ask about the lesson…" disabled={!documents.length||loading} required/><button type="submit" disabled={loading||!documents.length||question.trim().length<3}><Send size={17}/> Ask</button></div></form>
+ <p className="assistant-disclaimer">This first prototype uses lexical passage retrieval and optional LLM paraphrasing. Check the quoted sources; don't rely on it as the sole authority for homework.</p>
+ </section>;
+}
+function CurriculumManager({token}:{token:string}){
+ const [assignments,setAssignments]=useState<CurriculumAssignment[]>([]);
+ const [documents,setDocuments]=useState<CurriculumDocument[]>([]);
+ const [assignmentKey,setAssignmentKey]=useState('');
+ const [title,setTitle]=useState('');
+ const [file,setFile]=useState<File|null>(null);
+ const [busy,setBusy]=useState(false);
+ const [error,setError]=useState('');
+ const [message,setMessage]=useState('');
+ const [selected,setSelected]=useState<number|null>(null);
+ const [chunks,setChunks]=useState<CurriculumChunk[]>([]);
+ const [previewBusy,setPreviewBusy]=useState(false);
+ const options=assignments.map(a=>({key:`${a.class_id}:${a.subject_id}`,a}));
+ const refresh=async()=>{
+   const [a,d]=await Promise.all([request<CurriculumAssignment[]>('/curriculum/teacher/assignments',token),request<CurriculumDocument[]>('/curriculum/teacher/documents',token)]);
+   setAssignments(a);setDocuments(d);setAssignmentKey(k=>k|| (a.length?`${a[0].class_id}:${a[0].subject_id}`:''));
+ };
+ useEffect(()=>{let alive=true;Promise.all([request<CurriculumAssignment[]>('/curriculum/teacher/assignments',token),request<CurriculumDocument[]>('/curriculum/teacher/documents',token)]).then(([a,d])=>{
+   if(alive){setAssignments(a);setDocuments(d);if(a.length)setAssignmentKey(`${a[0].class_id}:${a[0].subject_id}`);}
+ }).catch(e=>{if(alive)setError(e instanceof Error?e.message:'Cannot load curriculum library');});return()=>{alive=false;};},[token]);
+ async function upload(e:FormEvent){e.preventDefault();setError('');setMessage('');const selectedAssignment=options.find(o=>o.key===assignmentKey)?.a;
+   if(!selectedAssignment||!file){setError('Choose an assigned subject and a document.');return;}
+   if(file.size>10*1024*1024){setError('Maximum file size is 10 MB.');return;}
+   setBusy(true);try{
+     const form=new FormData();form.set('class_id',String(selectedAssignment.class_id));form.set('subject_id',String(selectedAssignment.subject_id));form.set('title',title.trim());form.set('file',file);
+     const response=await fetch('/api/curriculum/teacher/upload',{method:'POST',headers:{Authorization:`Bearer ${token}`},body:form});
+     if(!response.ok){const body=await response.json().catch(()=>({}));throw new Error(typeof body.detail==='string'?body.detail:`Upload failed (${response.status})`);}
+     const result:{id:number;chunk_count:number}=await response.json();setMessage(`Saved document #${result.id} in PostgreSQL · ${result.chunk_count} chunks created.`);setTitle('');setFile(null);
+     const element=document.getElementById('curriculum-file') as HTMLInputElement|null;if(element)element.value='';
+     await refresh();
+   }catch(e){setError(e instanceof Error?e.message:'Upload failed');}finally{setBusy(false);}}
+ async function preview(documentId:number){setError('');if(selected===documentId){setSelected(null);setChunks([]);return;}setPreviewBusy(true);setSelected(documentId);try{
+   const result=await request<{chunks:CurriculumChunk[]}>(`/curriculum/teacher/documents/${documentId}/chunks`,token);setChunks(result.chunks);
+ }catch(e){setError(e instanceof Error?e.message:'Cannot preview');setSelected(null);}finally{setPreviewBusy(false);}}
+ async function download(doc:CurriculumDocument){setError('');try{
+   const response=await fetch(`/api/curriculum/teacher/documents/${doc.id}/download`,{headers:{Authorization:`Bearer ${token}`}});
+   if(!response.ok)throw new Error(`Download failed: ${response.status}`);
+   const blob=await response.blob();const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=doc.original_filename;link.click();URL.revokeObjectURL(url);
+ }catch(e){setError(e instanceof Error?e.message:'Download failed');}}
+ return <section className="curriculum-panel"><div className="curriculum-heading"><div><span className="small-pill">CURRICULUM LIBRARY</span><h2>Upload your teaching material</h2><p>Choose an assigned class and subject. The original file and extracted chunks are stored in PostgreSQL.</p></div><UploadCloud size={32}/></div>
+ <form className="upload-form" onSubmit={upload}><label htmlFor="curriculum-assignment">Class & subject</label><select id="curriculum-assignment" value={assignmentKey} onChange={e=>setAssignmentKey(e.target.value)} required>{!options.length&&<option value="">No subject assignments</option>}{options.map(({key,a})=><option key={key} value={key}>{a.class_name} · {a.grade_level} · {a.subject_name}</option>)}</select>
+ <label htmlFor="curriculum-title">Document title</label><input id="curriculum-title" maxLength={240} minLength={3} value={title} onChange={e=>setTitle(e.target.value)} placeholder="Grade 3 mathematics — Multiplication and division" required/>
+ <label htmlFor="curriculum-file">Course file (PDF, DOCX or UTF-8 TXT · 10 MB max)</label><input id="curriculum-file" type="file" accept=".pdf,.docx,.txt" onChange={e=>setFile(e.target.files?.[0]||null)} required/>
+ {error&&<div role="alert" className="error">{error}</div>}{message&&<div role="status" className="upload-success"><CheckCircle2 size={18}/>{message}</div>}
+ <button type="submit" className="submit" disabled={busy||!options.length}>{busy?'Processing document…':'Upload & process'} <UploadCloud size={18}/></button></form><button type="button" className="ad-signup-entry" onClick={()=>setShowAdmission(true)} style={{display:"block",width:"100%",marginTop:12,padding:12,borderRadius:12,border:"1px solid #8f83df",background:"#eeeafe",color:"#463798",fontWeight:700,cursor:"pointer"}}>New student? Sign up / Request admission</button>
+ <div className="curriculum-list-header"><h3>My uploaded documents <span className="small-pill">{documents.length}</span></h3><button type="button" className="secondary-action" onClick={()=>refresh().catch(e=>setError(String(e)))}><RefreshCw size={16}/> Refresh</button></div>
+ {!documents.length?<div className="empty-curriculum"><FileText size={27}/><p>No curriculum uploaded yet. Your first document will appear here.</p></div>:<div className="curriculum-doc-list">{documents.map(doc=><article key={doc.id} className="curriculum-doc"><div className="curriculum-doc-main"><FileText size={22}/><div><strong>{doc.title}</strong><p>{doc.class_name} · {doc.grade_level} · {doc.subject_name}</p><small>{doc.original_filename} · {(doc.file_size/1024).toFixed(1)} KB · {doc.chunk_count} chunks · {doc.status}</small></div></div><div className="curriculum-actions"><button className="secondary-action" type="button" onClick={()=>preview(doc.id)}><Search size={15}/>{selected===doc.id?'Close preview':'Preview chunks'}</button><button className="secondary-action" type="button" onClick={()=>download(doc)}>Download</button></div>{selected===doc.id&&<div className="chunk-list">{previewBusy?'Loading chunks…':chunks.map(chunk=><div className="chunk-card" key={chunk.id}><strong>Chunk {chunk.chunk_index+1}{chunk.page_number?` · page ${chunk.page_number}`:''}</strong><p>{chunk.content}</p></div>)}</div>}</article>)}</div>}
+ </section>;
+}
+
+type Variant='junior'|'senior';
+type Preferences={avatar_key:'fox'|'rabbit'|'penguin'|'turtle'|'cat'|'owl';preferred_style:'quest'|'story'|'draw'|'guided'|'focus'|'review';read_aloud:boolean;easy_words:boolean;short_sessions:boolean;calm_mode:boolean;large_text:boolean};
+type Experience={student_id:number;grade:number;variant:Variant;grade_label:string;class_name:string|null;school_name:string;preferences:Preferences};
+type StudySession={id:number;subject_name:string;activity_type:string;started_at:string;ended_at?:string|null};
+const avatars=[{id:'fox',icon:'🦊',name:'Fox'},{id:'rabbit',icon:'🐰',name:'Bunny'},{id:'penguin',icon:'🐧',name:'Penguin'},{id:'turtle',icon:'🐢',name:'Turtle'},{id:'cat',icon:'🐱',name:'Cat'},{id:'owl',icon:'🦉',name:'Owl'}] as const;
+const subjects=[
+ {name:'Mathematics',tint:'peach',subtitle:'Numbers, patterns & puzzles',subjectIcon:Calculator,shortName:'Mathematics'},
+ {name:'English',tint:'lilac',subtitle:'Stories & new words',subjectIcon:BookOpenText,shortName:'English'},
+ {name:'Science',tint:'mint',subtitle:'Explore how things work',subjectIcon:FlaskConical,shortName:'Science'},
+ {name:'History and geography',tint:'blue',subtitle:'People, places & the world',subjectIcon:Globe2,shortName:'History & geography'},
+ {name:'French',tint:'yellow',subtitle:'Speak, read & discover',subjectIcon:Languages,shortName:'French'}
+];
+function AvatarArt({avatar='fox',size=70}:{avatar?:string;size?:number}){return <img className="nova-avatar-art" src={`/avatars/${avatars.some(a=>a.id===avatar)?avatar:'fox'}.svg`} width={size} height={size} alt={`${avatar} avatar`} loading="lazy"/>;}
+function emojiAvatar(key:string){return avatars.find(x=>x.id===key)?.icon||'🦊';}
+function Header({user,logout,variant}:{user:User|null;logout:()=>void;variant?:Variant}){return <header className="en-header"><div className="en-logo"><span className="en-logo-mark"><GraduationCap size={22}/></span><span>EduNova</span></div><div className="en-header-caption">Discover more. Become more.</div><div className="en-head-actions"><ClockDisplay/>{variant==='junior'&&<span className="en-pill">Grades 1–6</span>}{user&&<span className="en-user-label">{user.first_name} · {user.role}</span>}{user&&<button type="button" className="en-outline en-signout" onClick={logout}><LogOut size={16}/> Sign out</button>}</div></header>}
+function SectionCard({title,icon,children,className=''}:{title:string;icon?:ReactNode;children:ReactNode;className?:string}){return <section className={`en-card ${className}`}><div className="en-card-title">{icon}<h3>{title}</h3></div>{children}</section>}
+function Welcome({user,subtitle,compact=false}:{user:User;subtitle:string;compact?:boolean}){return <div className={`en-welcome ${compact?'en-welcome-compact':''}`}><h1>Welcome back, {user.first_name}!</h1>{!compact&&<p>{subtitle}</p>}</div>}
+function SwitchSetting({label,detail,checked,onChange,icon}:{label:string;detail?:string;checked:boolean;onChange:(v:boolean)=>void;icon:ReactNode}){return <label className="en-switch-card"><span className="en-switch-icon">{icon}</span><span className="en-switch-copy"><strong>{label}</strong>{detail&&<small>{detail}</small>}</span><input type="checkbox" checked={checked} onChange={e=>onChange(e.target.checked)}/><span className="en-switch-visual" aria-hidden="true"/></label>}
+function JuniorSpace({user,token,experience}:{user:User;token:string;experience:Experience}){
+ const [prefs,setPrefs]=useState<Preferences>(()=>({...experience.preferences,preferred_style:['quest','story','draw'].includes(experience.preferences.preferred_style)?experience.preferences.preferred_style:'quest'}));
+ const [subject,setSubject]=useState('Mathematics');const [topic,setTopic]=useState('');const [step,setStep]=useState(0);
+ const [companionOpen,setCompanionOpen]=useState(false);
+ const [conversationsOpen,setConversationsOpen]=useState(false);
+ const [conversationList,setConversationList]=useState<{id:string;title:string}[]>([]);
+ const [selectedConversation,setSelectedConversation]=useState<string|null>(null);
+ const [session,setSession]=useState<StudySession|null>(null);const [history,setHistory]=useState<StudySession[]>([]);
+ const [prompt,setPrompt]=useState('');const [error,setError]=useState('');const [saving,setSaving]=useState(false);const [elapsed,setElapsed]=useState(0);const [onBreak,setOnBreak]=useState(false);
+ const update=(patch:Partial<Preferences>)=>setPrefs(p=>({...p,...patch}));
+ useEffect(()=>{if(!session || onBreak)return;const id=window.setInterval(()=>setElapsed(v=>v+1),1000);return()=>window.clearInterval(id);},[session,onBreak]);
+ useEffect(()=>{request<StudySession[]>('/student/experience/sessions',token).then(s=>{setHistory(s);setSession(s.find(x=>!x.ended_at)||null)}).catch(e=>setError(String(e)));},[token]);
+ async function savePreferences(){setSaving(true);setError('');try{await request('/student/experience/preferences',token,{method:'PUT',body:JSON.stringify(prefs)});}catch(e){setError(String(e));throw e;}finally{setSaving(false);}}
+ async function startQuest(){try{await savePreferences();const r=await request<{session:StudySession}>('/student/experience/sessions',token,{method:'POST',body:JSON.stringify({subject_name:subject,activity_type:'quest'})});setSession(r.session);setStep(3);setHistory(h=>[r.session,...h.filter(x=>x.id!==r.session.id)]);}catch{}}
+ async function finish(){if(!session)return;try{await request(`/student/experience/sessions/${session.id}/finish`,token,{method:'POST'});setSession(null);setHistory(h=>h.map(x=>x.id===session.id?{...x,ended_at:new Date().toISOString()}:x));setStep(0);}catch(e){setError(String(e));}}
+
+ return <div data-avatar={prefs.avatar_key} className={`en-space junior nova-themed ed-junior-compact ed-junior-focus ${companionOpen?'ed-companion-open':'ed-companion-closed'} ${conversationsOpen?'ed-conversations-open':'ed-conversations-closed'} ${step===3?'ed-junior-lesson':''} ${prefs.calm_mode?'en-calm':''} ${prefs.large_text?'en-large':''}`}>
+  <div className="en-body-grid ed-junior-workspace-grid">
+   {companionOpen&&<aside id="ed-junior-companion-panel" className="ed-junior-companion-panel" aria-label="Choose your learning companion">
+    <div className="ed-companion-heading"><span>MY COMPANION</span><button type="button" aria-label="Close companion sidebar" title="Close companion sidebar" onClick={()=>setCompanionOpen(false)}><PanelLeftClose size={18}/></button></div>
+    <div className="ed-companion-current"><AvatarArt avatar={prefs.avatar_key} size={86}/><strong>{avatars.find(a=>a.id===prefs.avatar_key)?.name}</strong><small>Choose a friend for your learning adventure.</small></div>
+    <div className="ed-companion-options" role="group" aria-label="Avatar selection">
+     {avatars.map(a=><button type="button" key={a.id} className={`ed-companion-option ${prefs.avatar_key===a.id?'chosen':''}`} title={a.name} aria-label={`Choose ${a.name}`} aria-pressed={prefs.avatar_key===a.id} onClick={()=>update({avatar_key:a.id})}><AvatarArt avatar={a.id} size={39}/><span>{a.name}</span></button>)}
+    </div>
+    <p className="ed-companion-tip">Your avatar changes your colors, not your school account.</p>
+   </aside>}
+   <div className="en-main-column">
+    <div className="ed-junior-control-row" role="toolbar" aria-label="Workspace sidebars">
+     <button type="button" className="ed-junior-companion-toggle" onClick={()=>setCompanionOpen(v=>!v)} aria-expanded={companionOpen} aria-controls="ed-junior-companion-panel" title={companionOpen?'Hide companion sidebar':'Open companion sidebar'}>
+      {companionOpen?<PanelLeftClose size={18}/>:<PanelLeftOpen size={18}/>} <span>My companion</span>
+     </button>
+     <button type="button" className="ed-junior-companion-toggle ed-junior-history-toggle" onClick={()=>setConversationsOpen(v=>!v)} aria-expanded={conversationsOpen} aria-controls="ed-junior-conversations-panel" title={conversationsOpen?'Hide conversations sidebar':'Open conversations sidebar'}>
+      {conversationsOpen?<PanelRightClose size={18}/>:<PanelRightOpen size={18}/>} <span>Conversations</span>{conversationList.length>0&&<small>{conversationList.length}</small>}
+     </button>
+     {step===3&&<>
+      <span className="ed-junior-toolbar-separator" aria-hidden="true"/>
+      <span className="ed-junior-subject-chip ed-junior-inline-subject"><BookOpen size={15}/> {subject}</span>
+      <div id="ed-junior-tools-slot" className="ed-junior-tool-buttons" aria-label="Learning tools"/>
+      <div className="ed-junior-utility-buttons">
+       <button type="button" className="ed-junior-companion-toggle ed-junior-icon-action" aria-label="Read welcome aloud" title="Read welcome aloud" onClick={()=>{if(window.speechSynthesis){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`Welcome to your ${subject} lesson. Take one step at a time.`);window.speechSynthesis.speak(u);}}}><Volume2 size={17}/></button>
+       <button type="button" className="ed-junior-companion-toggle ed-junior-finish" onClick={finish} title="Finish this study session"><Check size={16}/><span>Finish</span></button>
+      </div>
+     </>}
+    </div>
+ {error&&<div role="alert" className="en-error">{error}</div>}
+ {session&&step!==3&&<div className="en-session-banner"><div><strong>Your current quest: {session.subject_name}</strong><p>Started {new Date(session.started_at).toLocaleString()} · No countdown, no pressure.</p></div><button className="en-outline" onClick={()=>{setStep(3)}}>Continue <ArrowRight size={16}/></button></div>}
+ {step===0&&<SectionCard className="ed-junior-subject-card" title="Choose your learning world" icon={<Compass size={20}/>}>
+  <p className="ed-junior-subject-intro">One subject, one discovery at a time. Pick what interests you.</p>
+  <div className="ed-subject-worlds" role="group" aria-label="Choose a learning subject">
+   {subjects.map((s,i)=>{const SubjectIcon=s.subjectIcon;return <button type="button" key={s.name} className={`ed-subject-world ${s.tint} ${i===0?'ed-world-featured':''} ${subject===s.name?'chosen':''}`} onClick={()=>setSubject(s.name)} aria-pressed={subject===s.name}>
+    <span className="ed-world-art" aria-hidden="true"><span className="ed-world-orbit ed-world-orbit-one"/><span className="ed-world-orbit ed-world-orbit-two"/><SubjectIcon size={i===0?53:38} strokeWidth={1.65}/></span>
+    <span className="ed-world-copy"><strong>{s.shortName}</strong><small>{s.subtitle}</small></span>
+    <span className="ed-world-indicator" aria-hidden="true">{subject===s.name?<Check size={17} strokeWidth={3}/>:<ArrowRight size={16}/>}</span>
+   </button>})}
+  </div>
+  <label className="ed-junior-topic ed-junior-topic-redesign"><span>Have a particular topic in mind?</span><input value={topic} maxLength={120} onChange={e=>setTopic(e.target.value)} placeholder="For example: fractions or multiplication"/></label>
+ </SectionCard>}
+ {step===1&&<SectionCard title="How should we learn it?" icon={<Palette size={23}/>}><p className="en-muted">Pick your favorite way to explore {subject}.</p><div className="en-choice-grid">{[{id:'quest',icon:'quest',name:'A little quest',sub:'Explore with a friendly challenge'},{id:'story',icon:'story',name:'A silly story',sub:'Learn through an adventure'},{id:'draw',icon:'draw',name:'Make or draw',sub:'See ideas with pictures'}].map(x=><button className={`en-choice ${prefs.preferred_style===x.id?'chosen':''}`} key={x.id} onClick={()=>update({preferred_style:x.id as Preferences['preferred_style']})}><BookOpen size={23}/><strong>{x.name}</strong><small>{x.sub}</small></button>)}</div><div className="en-info">Trying something new counts as learning, too!</div></SectionCard>}
+ {step===2&&<SectionCard title="What helps you learn?" icon={<Settings2 size={23}/>}><p className="en-muted">Choose any helpers. You can change them whenever you like.</p><div className="en-toggle-grid"><SwitchSetting label="Read to me" detail="Listen to the on-screen lesson" icon={<Volume2/>} checked={prefs.read_aloud} onChange={v=>update({read_aloud:v})}/><SwitchSetting label="Easy words" detail="A simpler, calmer reading space" icon={<BookOpen/>} checked={prefs.easy_words} onChange={v=>update({easy_words:v})}/><SwitchSetting label="Short bursts" detail="Take a break after a little while" icon={<Timer/>} checked={prefs.short_sessions} onChange={v=>update({short_sessions:v})}/><SwitchSetting label="Calm colours" detail="Less visual excitement" icon={<Moon/>} checked={prefs.calm_mode} onChange={v=>update({calm_mode:v})}/><SwitchSetting label="Larger text" detail="Make reading easier" icon={<Settings2/>} checked={prefs.large_text} onChange={v=>update({large_text:v})}/></div><div className="en-info">No pressure. Helpers are preferences, not a test.</div></SectionCard>}
+ {step===3&&<section className="ed-junior-lesson-panel ed-junior-chat-fullscreen" aria-label="Learning assistant">
+  <StudentAgent token={token} grade={experience.grade} externalHistory selectedConversationId={selectedConversation} onConversationListChange={setConversationList} onConversationSelect={setSelectedConversation}/>
+ </section>}
+ {step<3&&<div className="en-actions">{step>0&&step<3&&<button className="en-outline" onClick={()=>setStep(s=>s-1)}><ArrowLeft size={17}/> Back</button>}<div className="en-grow"/> {step<2&&<button className="en-primary" onClick={()=>setStep(s=>s+1)}>Next step <ArrowRight size={17}/></button>}{step===2&&<button className="en-primary" disabled={saving} onClick={startQuest}><Star size={18}/> Start my quest</button>}</div>}</div>
+   {conversationsOpen&&<aside id="ed-junior-conversations-panel" className="ed-junior-conversations-panel" aria-label="Previous learning conversations">
+    <div className="ed-companion-heading"><span>CONVERSATIONS</span><button type="button" aria-label="Close conversations sidebar" title="Close conversations sidebar" onClick={()=>setConversationsOpen(false)}><PanelRightClose size={18}/></button></div>
+    <button type="button" className="ed-junior-new-conversation" onClick={()=>{setSelectedConversation(null);setStep(3)}}><Plus size={16}/> New conversation</button>
+    <div className="ed-junior-conversation-list">
+     {conversationList.length===0?<p className="ed-junior-no-conversations">Your saved discussions will appear here.</p>:conversationList.map(t=><button type="button" key={t.id} className={`ed-junior-conversation-item ${selectedConversation===t.id?'selected':''}`} onClick={()=>{setSelectedConversation(t.id);setStep(3)}} title={t.title}><MessageSquareText size={16}/><span>{t.title}</span></button>)}
+    </div>
+   </aside>}
+  </div></div>;
+}
+function SeniorSpace({user,token,experience}:{user:User;token:string;experience:Experience}){
+ return <main className="en-space en-senior-modern ed-senior-fullscreen" aria-label="Senior student workspace">
+  <SeniorAgentStudio token={token}/>
+ </main>
+}
+function TeacherSpaceView({user,token,data}:{user:User;token:string;data:TeacherSpace}){
+ const [tab,setTab]=useState<'overview'|'curriculum'|'assignments'|'quiz'|'reasoning'>('overview');
+ return <main className="en-space staff nova-staff en-teacher-modern">
+ <div className="en-staff-top"><div><span className="en-eyebrow">EDUNOVA / TEACHER SPACE</span><h1>Welcome back, {user.first_name}.</h1><p>Plan the week, publish a lesson, or review student reasoning.</p></div><span className="en-staff-school">{data.classes[0]?.school_name||'My school'}</span></div>
+ <nav className="en-teacher-nav" aria-label="Teacher sections">
+ <button className={tab==='overview'?'active':''} onClick={()=>setTab('overview')}><Users size={18}/> Classes</button>
+ <button className={tab==='curriculum'?'active':''} onClick={()=>setTab('curriculum')}><BookOpen size={18}/> Curriculum</button>
+ <button className={tab==='assignments'?'active':''} onClick={()=>setTab('assignments')}><CalendarDays size={18}/> Weekly assignments</button>
+ <button className={tab==='quiz'?'active':''} onClick={()=>setTab('quiz')}><BookOpen size={18}/> Quiz studio</button>
+ <button className={tab==='reasoning'?'active':''} onClick={()=>setTab('reasoning')}><Presentation size={18}/> Written reasoning</button>
+ </nav>
+ {tab==='overview'&&<div className="en-teacher-home"><section className="en-teacher-intro"><span className="en-eyebrow">YOUR NEXT ACTION</span><h2>What are you preparing today?</h2><p>Each workspace has a dedicated page—no lengthy combined forms.</p><div className="en-teacher-quick"><button onClick={()=>setTab('assignments')}><CalendarDays size={23}/><strong>Assign next week's work</strong><small>Create lesson targets and quiz requirements for your students</small><ArrowRight size={18}/></button><button onClick={()=>setTab('curriculum')}><UploadCloud size={23}/><strong>Upload a lesson</strong><small>Import your curriculum and check extracted source chunks</small><ArrowRight size={18}/></button><button onClick={()=>setTab('quiz')}><BookOpen size={23}/><strong>Build a quiz</strong><small>Generate, review and approve grounded questions</small><ArrowRight size={18}/></button></div></section><section className="en-teacher-class-list"><h2>My assigned classes</h2>{data.classes.map(c=><div className="en-teacher-class-row" key={c.class_id}><div><strong>{c.class_name}</strong><small>{c.grade_level} · {c.school_name}</small></div><span>{c.student_count} students</span></div>)}<h3>Students</h3>{data.students.map(x=><div className="en-teacher-class-row" key={x.student_id}><span>{x.first_name} {x.last_name}</span><small>{x.class_name}</small></div>)}</section></div>}
+ {tab==='curriculum'&&<CurriculumManager token={token}/>}
+ {tab==='assignments'&&<TeacherAgentPlanning token={token} mode="plan"/>}
+ {tab==='quiz'&&<TeacherAgentPlanning token={token} mode="quiz"/>}
+ {tab==='reasoning'&&<SeniorMathTeacherStudio token={token}/>}
+ </main>
+}
+function ParentSpaceView({user,data}:{user:User;data:ParentSpace}){return <div className="en-space parent nova-family"><Welcome user={user} subtitle="" compact/><div className="en-parent-banner"><span><AvatarArt avatar="fox" size={82}/></span><div><h2>Your family learning hub</h2><p>Encourage progress, celebrate effort, and plan helpful routines together.</p></div></div><div className="en-two-columns"><SectionCard title="Your children" icon={<Users/>}>{data.children.length?data.children.map((c,i)=><div key={c.student_id} className="en-child-card"><div className="en-child-avatar"><AvatarArt avatar={i%2?'penguin':'fox'} size={48}/></div><div><strong>{c.first_name} {c.last_name}</strong><small>{c.class_name||'Class pending'} · {c.grade_level||'Grade pending'}</small><small>{c.school_name}</small></div></div>):<p>No linked children available.</p>}</SectionCard><SectionCard title="Support at home" icon={<HeartHandshake/>}><div className="en-support-item"><span><BookOpen size={24}/></span><div><strong>Read or discuss a lesson together</strong><small>Ask what your child learned, not just their score.</small></div></div><div className="en-support-item"><span><Palette size={24}/></span><div><strong>Try a real-world activity</strong><small>Turn classroom ideas into everyday discoveries.</small></div></div><div className="en-support-item"><span><HeartHandshake size={24}/></span><div><strong>Celebrate steady effort</strong><small>Short breaks and small wins matter.</small></div></div></SectionCard></div><div className="en-two-columns"><SectionCard title="Learning updates" icon={<CheckCircle2/>}><p className="en-muted">Your children's class records are connected. Verified progress summaries will appear here when academic reporting endpoints are implemented.</p><div className="en-info">No invented grades, rankings or study statistics.</div></SectionCard><SectionCard title="Privacy and safety" icon={<ShieldCheck/>}><p className="en-muted">This space is for supportive supervision. Private student conversations, diary entries, personal surveys, and sensitive needs are not shown in your parent dashboard.</p></SectionCard></div></div>}
+function DirectorSpaceView({data}:{data:DirectorSpace}){return <div className="en-space staff"><h1>School overview</h1><div className="en-summary-row"><div className="en-stat"><School/><strong>{data.school?.school_name||'School not found'}</strong></div><div className="en-stat"><Users/><strong>{data.school?.student_count||0} students</strong></div><div className="en-stat"><BookOpen/><strong>{data.school?.teacher_count||0} teachers</strong></div></div></div>}
+export function App(){
+ const [token,setToken]=useState(()=>sessionStorage.getItem('edunova_token')||sessionStorage.getItem('upside_token')||'');const [user,setUser]=useState<User|null>(null);const [space,setSpace]=useState<Space|null>(null);const [experience,setExperience]=useState<Experience|null>(null);const [email,setEmail]=useState('');const [password,setPassword]=useState('');const [showPassword,setShowPassword]=useState(false);const [showAdmission,setShowAdmission]=useState(false);const [busy,setBusy]=useState(false);const [error,setError]=useState('');
+ useEffect(()=>{let alive=true;if(!token){setUser(null);setSpace(null);setExperience(null);return;}request<User>('/auth/me',token).then(u=>{if(alive)setUser(u)}).catch(()=>{if(alive){sessionStorage.removeItem('edunova_token');sessionStorage.removeItem('upside_token');setToken('');setUser(null)}});return()=>{alive=false}},[token]);
+ useEffect(()=>{let alive=true;if(!user||!token)return;setSpace(null);setExperience(null);setError('');const path=['student','parent','teacher','director'].includes(user.role)?`/spaces/${user.role}`:`/dashboards/${user.role}`;Promise.all([request<Space>(path,token),...(user.role==='student'?[request<Experience>('/student/experience/me',token)]:[])]).then(([s,p])=>{if(alive){setSpace(s);if(p)setExperience(p as Experience)}}).catch(e=>{if(alive)setError(String(e))});return()=>{alive=false}},[user,token]);
+ async function login(e:FormEvent){e.preventDefault();setBusy(true);setError('');try{const r=await request<LoginResult>('/auth/login',undefined,{method:'POST',body:JSON.stringify({email:email.trim(),password})});sessionStorage.setItem('edunova_token',r.access_token);sessionStorage.removeItem('upside_token');setToken(r.access_token);setUser(r.user);setPassword('')}catch(e){setError(e instanceof Error?e.message:'Login failed')}finally{setBusy(false)}}
+ async function logout(){try{if(token)await request('/auth/logout',token,{method:'POST'})}catch{}finally{sessionStorage.removeItem('edunova_token');sessionStorage.removeItem('upside_token');setToken('');setUser(null);setSpace(null);setExperience(null)}}
+ return <div className="en-app"><Header user={user} logout={logout} variant={experience?.variant}/>{!user&&showAdmission&&<StudentAdmission onClose={()=>setShowAdmission(false)}/>}{!user?<main className="en-login"><div className="en-login-hero"><div className="nova-hero-orbit" aria-hidden="true"><AvatarArt avatar="fox" size={170}/></div><span className="en-eyebrow">AN EDUCATION THAT GROWS WITH YOU</span><h1>Every learner has<br/><em>a universe</em><br/>to explore.</h1><p>One inspiring place for students, teachers, and families—with learning that grows with you.</p><div className="en-login-role-cards"><div><span><Gamepad2 size={24}/></span><strong>Young explorers</strong><small>Grades 1–6 · Adventures & discovery</small></div><div><span><GraduationCap size={24}/></span><strong>Growing minds</strong><small>Grades 7–12 · Focus & independence</small></div><div><span><BookOpen size={24}/></span><strong>Teachers & parents</strong><small>Support every child's journey</small></div></div><div className="en-hero-fox"><span>Little steps. Big discoveries.</span></div></div><div className="en-login-panel"><div className="en-login-icon"><LockKeyhole size={22}/></div><span className="en-eyebrow">YOUR SCHOOL ACCOUNT</span><h2>Welcome back!</h2><p>Enter your Exellence Academy account details. Your space is selected securely from your school record.</p><form onSubmit={login}><label className="en-field">Email address<input type="email" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} placeholder="yourname@exellence.com" required/></label><label className="en-field">Password<div className="en-pass"><input type={showPassword?'text':'password'} autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Enter your password" required/><button type="button" aria-label={showPassword?'Hide password':'Show password'} onClick={()=>setShowPassword(x=>!x)}>{showPassword?<EyeOff size={18}/>:<Eye size={18}/>}</button></div></label>{error&&<p className="en-error" role="alert">{error}</p>}<button type="submit" className="en-primary en-login-button" disabled={busy}>{busy?'Signing in…':'Enter my space'} <ArrowRight/></button></form><p className="en-privacy"><ShieldCheck size={16}/> Secured by your school login. Avatar selection never replaces authentication.</p></div></main>:<main className="en-layout">{error&&<div className="en-error" role="alert">{error}</div>}{space?.space==='student'&&experience?(experience.variant==='junior'?<JuniorSpace key={experience.student_id} user={user} token={token} experience={experience}/>:<SeniorSpace key={experience.student_id} user={user} token={token} experience={experience}/>):space?.space==='teacher'?<TeacherSpaceView user={user} token={token} data={space}/>:space?.space==='parent'?<ParentSpaceView user={user} data={space}/>:space?.space==='director'?<><DirectorSpaceView data={space}/><DirectorAdmissions token={token}/></>:user.role==='admin'?<div className="en-card"><h2>Admin authenticated</h2><p>This edition focuses on the four requested learning interfaces.</p></div>:!error&&<div className="en-loading"><LoaderCircle className="en-spin"/> Loading your school workspace…</div>}</main>}<footer className="en-footer">© 2026 EduNova · Exellence Academy <span>Learn with curiosity. Grow with care.</span></footer></div>
+}

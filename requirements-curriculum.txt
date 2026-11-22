@@ -1,0 +1,2 @@
+# Optional: only needed if regenerating the included Grade 11 PDF.
+reportlab>=4.2,<5
